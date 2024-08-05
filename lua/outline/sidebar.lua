@@ -365,7 +365,9 @@ end
 
 function Sidebar:no_providers_ui()
   self.view:rewrite_lines({ 'No supported provider...' })
-  vim.api.nvim_win_set_cursor(self.view.win, { 1, 0 })
+  if utils.win_is_valid(self.code) then
+    vim.api.nvim_win_set_cursor(self.view.win, { 1, 0 })
+  end
 end
 
 ---Currently hovered node in outline
@@ -396,17 +398,25 @@ function Sidebar:__goto_location(change_focus)
   vim.fn.win_execute(self.code.win, "normal! m'")
 
   vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
+  if utils.win_is_valid(self.code) then
+    local line_count = vim.api.nvim_buf_line_count(self.code.buf)
+    if node.line > 0 and line_count > node.line then
+      vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
+    end
+  end
 
   if cfg.o.outline_window.center_on_jump then
     vim.fn.win_execute(self.code.win, 'normal! zz')
   end
 
-  utils.flash_highlight(
-    self.code.win,
-    node.line + 1,
-    cfg.o.outline_window.jump_highlight_duration,
-    'OutlineJumpHighlight'
-  )
+  if utils.win_is_valid(self.code) then
+    utils.flash_highlight(
+      self.code.win,
+      node.line + 1,
+      cfg.o.outline_window.jump_highlight_duration,
+      'OutlineJumpHighlight'
+    )
+  end
 
   if change_focus then
     vim.fn.win_gotoid(self.code.win)
