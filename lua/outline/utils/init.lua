@@ -116,4 +116,12 @@ function M.deepcopy_excluding(t, keys)
   return res
 end
 
+function M.win_is_valid(opts)
+  return opts.win
+    and vim.api.nvim_win_is_valid(opts.win)
+    and opts.buf
+    and vim.api.nvim_buf_is_valid(opts.buf)
+    and vim.api.nvim_win_get_buf(opts.win) == opts.buf
+end
+
 return M
