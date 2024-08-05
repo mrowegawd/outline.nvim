@@ -9,7 +9,9 @@ local M = {
 ---Clear all highlights in buffer
 ---@param bufnr integer
 function M.clear_all_ns(bufnr)
-  vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
+  if type(bufnr) == 'number' and vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
+  end
 end
 
 ---Clear hover highlights in buffer
