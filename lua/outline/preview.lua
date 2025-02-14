@@ -286,9 +286,11 @@ function LivePreview:update(node)
 end
 
 function LivePreview:focus()
-  vim.api.nvim_set_current_win(self.win)
-  -- Remove this when the autocmd for WinEnter works above
-  vim.api.nvim_win_set_option(self.win, 'cursorline', self.initial_cursorline)
+  if self.win ~= nil then
+    vim.api.nvim_set_current_win(self.win)
+    -- Remove this when the autocmd for WinEnter works above
+    vim.api.nvim_win_set_option(self.win, 'cursorline', self.initial_cursorline)
+  end
 end
 
 ---Create, focus, or update preview
@@ -310,7 +312,7 @@ function LivePreview:show()
     return
   end
 
-  if not self.win and (self.win ~= nil) then
+  if not self.win then
     self:create()
     vim.api.nvim_win_set_cursor(self.win, { node.line + 1, node.character })
     self.last_node = node
