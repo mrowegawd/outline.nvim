@@ -281,7 +281,7 @@ function Sidebar:update_cursor_pos(current)
     -- Padding area between lineno column and start of guides
     col = #tostring(vim.api.nvim_buf_line_count(buf) - 1)
   end
-  if current then -- Don't attempt to set cursor if the matching node is not found
+  if current and (self.view.win ~= nil) then -- Don't attempt to set cursor if the matching node is not found
     vim.api.nvim_win_set_cursor(self.view.win, { current.line_in_outline, col })
   end
 end
@@ -397,8 +397,8 @@ function Sidebar:__goto_location(change_focus)
   -- XXX: There will be strange problems when using `nvim_buf_set_mark()`.
   vim.fn.win_execute(self.code.win, "normal! m'")
 
-  vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
   if utils.win_is_valid(self.code) then
+    vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
     local line_count = vim.api.nvim_buf_line_count(self.code.buf)
     if node.line > 0 and line_count > node.line then
       vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })

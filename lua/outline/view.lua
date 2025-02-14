@@ -99,9 +99,14 @@ end
 ---Replace all lines in buffer with given new `lines`
 ---@param lines string[]
 function View:rewrite_lines(lines)
-  vim.api.nvim_buf_set_option(self.buf, 'modifiable', true)
-  vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, lines)
-  vim.api.nvim_buf_set_option(self.buf, 'modifiable', false)
+  if self.buf ~= nil and vim.api.nvim_buf_is_valid(self.buf) then
+    vim.api.nvim_set_option_value('modifiable', true, { buf = self.buf })
+    vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, lines)
+    vim.api.nvim_set_option_value('modifiable', false, { buf = self.buf })
+  end
+  -- vim.api.nvim_buf_set_option(self.buf, 'modifiable', true)
+  -- vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, lines)
+  -- vim.api.nvim_buf_set_option(self.buf, 'modifiable', false)
 end
 
 function View:clear_all_ns()
@@ -114,26 +119,28 @@ end
 ---@param details string[]
 ---@param linenos string[]
 function View:add_hl_and_ns(hl, nodes, details, linenos)
-  highlight.items(self.buf, hl)
-  if cfg.o.outline_items.highlight_hovered_item then
-    highlight.hovers(self.buf, nodes)
-  end
-  if cfg.o.outline_items.show_symbol_details then
-    highlight.details(self.buf, details)
-  end
+  if self.buf ~= nil then
+    highlight.items(self.buf, hl)
+    if cfg.o.outline_items.highlight_hovered_item then
+      highlight.hovers(self.buf, nodes)
+    end
+    if cfg.o.outline_items.show_symbol_details then
+      highlight.details(self.buf, details)
+    end
 
-  -- Note on hl_mode:
-  -- When hide_cursor + cursorline enabled, we want the lineno to also take on
-  -- the cursorline background so wherever the cursor is, it appears blended.
-  -- We want 'replace' even for `hide_cursor=false cursorline=true` because
-  -- vim's native line numbers do not get highlighted by cursorline.
-  if cfg.o.outline_items.show_symbol_lineno then
+    -- Note on hl_mode:
+    -- When hide_cursor + cursorline enabled, we want the lineno to also take on
+    -- the cursorline background so wherever the cursor is, it appears blended.
+    -- We want 'replace' even for `hide_cursor=false cursorline=true` because
+    -- vim's native line numbers do not get highlighted by cursorline.
+    if cfg.o.outline_items.show_symbol_lineno then
     -- stylua: ignore start
     highlight.linenos(
       self.buf, linenos,
       (cfg.o.outline_window.hide_cursor and 'combine') or 'replace'
     )
-    -- stylua: ignore end
+      -- stylua: ignore end
+    end
   end
 end
 

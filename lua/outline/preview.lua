@@ -279,8 +279,10 @@ function LivePreview:setup()
 end
 
 function LivePreview:update(node)
-  vim.api.nvim_win_set_buf(self.win, self.s.code.buf)
-  vim.api.nvim_win_set_cursor(self.win, { node.line + 1, node.character })
+  if self.win ~= nil then
+    vim.api.nvim_win_set_buf(self.win, self.s.code.buf)
+    vim.api.nvim_win_set_cursor(self.win, { node.line + 1, node.character })
+  end
 end
 
 function LivePreview:focus()
@@ -308,7 +310,7 @@ function LivePreview:show()
     return
   end
 
-  if not self.win then
+  if not self.win and (self.win ~= nil) then
     self:create()
     vim.api.nvim_win_set_cursor(self.win, { node.line + 1, node.character })
     self.last_node = node
