@@ -405,7 +405,6 @@ function Sidebar:__goto_location(change_focus)
   vim.fn.win_execute(self.code.win, "normal! m'")
 
   if utils.win_is_valid(self.code) then
-    vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
     local line_count = vim.api.nvim_buf_line_count(self.code.buf)
     if node.line > 0 and line_count > node.line then
       vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
