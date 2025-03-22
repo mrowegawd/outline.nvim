@@ -21,12 +21,14 @@ function M.is_folded(node)
   local hover = cfg.o.symbol_folding.auto_unfold_hover
   local only = cfg.o.symbol_folding.auto_unfold.only
 
-  if node.folded ~= nil then
-    return node.folded
-  elseif node.parent.is_root and node.parent.child_count <= only then
-    return false
-  elseif node.hovered and hover then
-    return false
+  if node then
+    if node.folded ~= nil then
+      return node.folded
+    elseif node.parent.is_root and node.parent.child_count <= only then
+      return false
+    elseif node.hovered and hover then
+      return false
+    end
   else
     return get_default_folded(node.depth)
   end
