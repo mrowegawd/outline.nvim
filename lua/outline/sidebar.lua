@@ -282,7 +282,9 @@ function Sidebar:update_cursor_pos(current)
     col = #tostring(vim.api.nvim_buf_line_count(buf) - 1)
   end
   if current then -- Don't attempt to set cursor if the matching node is not found
-    vim.api.nvim_win_set_cursor(self.view.win, { current.line_in_outline, col })
+    if self.view.win and vim.api.nvim_win_is_valid(self.view.win) then
+      vim.api.nvim_win_set_cursor(self.view.win, { current.line_in_outline, col })
+    end
   end
 end
 
@@ -402,7 +404,7 @@ function Sidebar:__goto_location(change_focus)
   -- XXX: There will be strange problems when using `nvim_buf_set_mark()`.
   vim.fn.win_execute(self.code.win, "normal! m'")
 
-  if vim.api.nvim_win_is_valid(self.code.win) then
+  if self.code.win and vim.api.nvim_win_is_valid(self.code.win) then
     vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
   end
 

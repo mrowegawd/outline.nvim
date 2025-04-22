@@ -119,14 +119,15 @@ end
 ---@param details string[]
 ---@param linenos string[]
 function View:add_hl_and_ns(hl, nodes, details, linenos)
-  highlight.items(self.buf, hl)
-  if cfg.o.outline_items.highlight_hovered_item then
-    highlight.hovers(self.buf, nodes)
+  if self.buf and vim.api.nvim_buf_is_valid(self.buf) then
+    highlight.items(self.buf, hl)
+    if cfg.o.outline_items.highlight_hovered_item then
+      highlight.hovers(self.buf, nodes)
+    end
+    if cfg.o.outline_items.show_symbol_details then
+      highlight.details(self.buf, details)
+    end
   end
-  if cfg.o.outline_items.show_symbol_details then
-    highlight.details(self.buf, details)
-  end
-
   -- Note on hl_mode:
   -- When hide_cursor + cursorline enabled, we want the lineno to also take on
   -- the cursorline background so wherever the cursor is, it appears blended.
