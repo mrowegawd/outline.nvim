@@ -402,7 +402,9 @@ function Sidebar:__goto_location(change_focus)
   -- XXX: There will be strange problems when using `nvim_buf_set_mark()`.
   vim.fn.win_execute(self.code.win, "normal! m'")
 
-  vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
+  if vim.api.nvim_win_is_valid(self.code.win) then
+    vim.api.nvim_win_set_cursor(self.code.win, { node.line + 1, node.character })
+  end
 
   if cfg.o.outline_window.center_on_jump then
     vim.fn.win_execute(self.code.win, 'normal! zz')
